@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --ipl-blue: #003B8E;
+  --ipl-orange: #FF6B35;
+  --ipl-gold: #FFD700;
+  --ipl-dark: #0A0E1A;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--ipl-dark);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111827; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4B5563; }
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+/* Gold gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #FFD700, #FF6B35);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Blue gradient button */
+.btn-primary {
+  background: linear-gradient(135deg, #FFD700, #FF6B35);
+  color: #000;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 15px;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Team card select */
+.team-card {
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 20px;
+  transition: all 0.2s ease;
+  background: rgba(255,255,255,0.03);
+}
+.team-card:hover {
+  border-color: rgba(255,215,0,0.4);
+  background: rgba(255,215,0,0.05);
+  transform: translateY(-2px);
+}
+.team-card.selected {
+  border-color: #FFD700;
+  background: rgba(255,215,0,0.1);
+  box-shadow: 0 0 20px rgba(255,215,0,0.2);
+}
+
+/* Countdown timer */
+.countdown-ring {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Status badge */
+.badge-live { 
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,0.3);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-open {
+  background: rgba(34,197,94,0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34,197,94,0.3);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-upcoming {
+  background: rgba(251,191,36,0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251,191,36,0.2);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-completed {
+  background: rgba(107,114,128,0.2);
+  color: #9ca3af;
+  border: 1px solid rgba(107,114,128,0.2);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Leaderboard rows */
+.leaderboard-row {
+  transition: all 0.2s ease;
+}
+.leaderboard-row:hover {
+  background: rgba(255,255,255,0.04);
+  transform: translateX(4px);
+}
+
+/* Input styles */
+.ipl-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: white;
+  padding: 12px 16px;
+  font-size: 15px;
+  width: 100%;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.ipl-input:focus {
+  border-color: #FFD700;
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.1);
+}
+.ipl-input option {
+  background: #1f2937;
+  color: white;
+}
