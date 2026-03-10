@@ -13,7 +13,7 @@ export default function Navbar() {
       
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2 group">
-        <span className="text-2xl">🏏</span>
+        <Image src="/logo.png" alt="IPL Predict" width={36} height={36} className="rounded-lg" />
         <span className="font-bold text-lg">
           <span className="gradient-text">IPL</span>
           <span className="text-white ml-1 opacity-70">Predict</span>

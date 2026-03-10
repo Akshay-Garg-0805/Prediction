@@ -58,7 +58,12 @@ export async function fetchUpcomingIPLMatches(): Promise<
   }>
 > {
   try {
-    const res = await fetch(`${CRICBUZZ_BASE}/cricket-series/9237/indian-premier-league-2025/matches`, {
+    // Set CRICBUZZ_SERIES_URL in Vercel env vars when IPL 2026 page goes live on Cricbuzz
+    // e.g. https://www.cricbuzz.com/cricket-series/XXXXX/indian-premier-league-2026/matches
+    const seriesUrl =
+      process.env.CRICBUZZ_SERIES_URL ||
+      "https://www.cricbuzz.com/cricket-series/9237/indian-premier-league-2025/matches";
+    const res = await fetch(seriesUrl, {
       headers: HEADERS,
       next: { revalidate: 0 },
     });

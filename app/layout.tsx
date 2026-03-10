@@ -9,6 +9,15 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 export const metadata: Metadata = {
   title: "IPL Predictions | Beat Your Friends 🏏",
   description: "Predict IPL match outcomes, compete with friends, and top the leaderboard!",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "IPL Predict",
+    description: "Predict IPL match outcomes and beat your friends!",
+    images: ["/logo.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
