@@ -187,20 +187,31 @@ export default function PredictPage() {
             <div><span className="text-gray-400">Top Batsman:</span> <span className="text-yellow-400 font-bold">{match.topBatsman}</span></div>
             <div><span className="text-gray-400">Best Bowler:</span> <span className="text-blue-400 font-bold">{match.bestBowler}</span></div>
           </div>
-          {existingPrediction && existingPrediction.points !== null && (
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <div className="text-center">
-                <div className="text-3xl font-black gradient-text">{existingPrediction.points} pts</div>
-                <div className="text-gray-400 text-sm mt-1">Your score this match</div>
-                {existingPrediction.pointsBreakdown && (
-                  <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-gray-500">
-                    <div>Winner: +{existingPrediction.pointsBreakdown.winningTeam}</div>
-                    <div>Batsman: +{existingPrediction.pointsBreakdown.topBatsman}</div>
-                    <div>Bowler: +{existingPrediction.pointsBreakdown.bestBowler}</div>
-                    <div>Score: +{existingPrediction.pointsBreakdown.firstInningsScore}</div>
-                  </div>
-                )}
+          {/* User's prediction details */}
+          {existingPrediction && (
+            <div className="mt-6 pt-5 border-t border-white/10">
+              <h3 className="font-bold text-sm text-gray-400 mb-3 text-center uppercase tracking-wide">Your Prediction</h3>
+              <div className="grid grid-cols-2 gap-3 text-sm mb-5 bg-white/5 rounded-xl p-4">
+                <div><span className="text-gray-500">Winner:</span> <span className="text-white">{existingPrediction.predictedWinner}</span></div>
+                <div><span className="text-gray-500">1st Innings:</span> <span className="text-white">{existingPrediction.predictedScore}</span></div>
+                <div><span className="text-gray-500">Top Batsman:</span> <span className="text-white">{existingPrediction.predictedBatsman}</span></div>
+                <div><span className="text-gray-500">Best Bowler:</span> <span className="text-white">{existingPrediction.predictedBowler}</span></div>
               </div>
+
+              {existingPrediction.points !== null && (
+                <div className="text-center">
+                  <div className="text-3xl font-black gradient-text">{existingPrediction.points} pts</div>
+                  <div className="text-gray-400 text-sm mt-1">Your score this match</div>
+                  {existingPrediction.pointsBreakdown && (
+                    <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-gray-500">
+                      <div>Winner: +{existingPrediction.pointsBreakdown.winningTeam}</div>
+                      <div>Batsman: +{existingPrediction.pointsBreakdown.topBatsman}</div>
+                      <div>Bowler: +{existingPrediction.pointsBreakdown.bestBowler}</div>
+                      <div>Score: +{existingPrediction.pointsBreakdown.firstInningsScore}</div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

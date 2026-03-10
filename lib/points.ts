@@ -91,24 +91,31 @@ export async function calculateAndSavePoints(matchId: string): Promise<void> {
 
   await batch.commit();
 
-  // --- Update each user's total points ---
-  for (const [uid, pts] of Object.entries(userPointUpdates)) {
-    await adminDb.doc(`users/${uid}`).update({
-      totalPoints: (await adminDb.doc(`users/${uid}`).get()).data()?.totalPoints + pts || pts,
-    });
+  // --- Completely recalculate total points for each user to ensure idempotence ---
+  const usersSnap = await adminDb.collection("users").get();
+  for (const userDoc of usersSnap.docs) {
+    const uid = userDoc.id;
+    // Iterate over all predictions to sum points
+    // To do this efficiently, we can use an aggregation or just fetch them.
+    // Since Firebase doesn't support Collection Group Queries without an index by default,
+    // we'll update the user's totalPoints incrementally ONLY IF it changed, or better:
+    // To be perfectly idempotent, we need to rebuild totals. For ~15 users this is fine.
+    
+    // Actually, a simpler approach: update the overall total points in `rebuildLeaderboard`
+    // where we sum up all match points for each user.
   }
 
-  // --- Update leaderboard ---
+  // --- Update leaderboard and user total points ---
   await rebuildLeaderboard();
 
   // --- Send results email ---
-  const usersSnap = await adminDb.collection("users").get();
-  const emails = usersSnap.docs.map((d) => (d.data() as UserProfile).email).filter(Boolean);
+  const emailsSnap = await adminDb.collection("users").get();
+  const emails = emailsSnap.docs.map((d) => (d.data() as UserProfile).email).filter(Boolean);
 
   const summaryLines = predictions
     .map((p) => {
       const pts = userPointUpdates[p.uid] || 0;
-      const user = usersSnap.docs.find((d) => d.id === p.uid)?.data() as UserProfile;
+      const user = emailsSnap.docs.find((d) => d.id === p.uid)?.data() as UserProfile;
       return `${user?.displayName || p.uid}: +${pts} points`;
     })
     .join("\n");
@@ -121,22 +128,49 @@ export async function calculateAndSavePoints(matchId: string): Promise<void> {
 }
 
 /**
- * Rebuild the leaderboard from all users' total points
+ * Rebuild the leaderboard and update users' total points from scratch (idempotent)
  */
 export async function rebuildLeaderboard(): Promise<void> {
-  const usersSnap = await adminDb.collection("users").orderBy("totalPoints", "desc").get();
+  const usersSnap = await adminDb.collection("users").get();
+  const rankings: LeaderboardEntry[] = [];
 
-  const rankings: LeaderboardEntry[] = usersSnap.docs.map((d) => {
-    const user = d.data() as UserProfile;
-    return {
-      uid: d.id,
+  const batch = adminDb.batch();
+
+  for (const userDoc of usersSnap.docs) {
+    const uid = userDoc.id;
+    const user = userDoc.data() as UserProfile;
+    let totalPoints = 0;
+
+    // Fetch all predictions for this user
+    // Since we don't have a collectionGroup index, we have to fetch all matches
+    const matchesSnap = await adminDb.collection("matches").where("status", "==", "completed").get();
+    
+    for (const matchDoc of matchesSnap.docs) {
+      const predSnap = await adminDb.doc(`predictions/${matchDoc.id}/entries/${uid}`).get();
+      if (predSnap.exists) {
+        const pred = predSnap.data() as Prediction;
+        if (typeof pred.points === "number") {
+          totalPoints += pred.points;
+        }
+      }
+    }
+
+    batch.update(userDoc.ref, { totalPoints });
+
+    rankings.push({
+      uid,
       displayName: user.displayName,
       photoURL: user.photoURL,
       email: user.email,
-      totalPoints: user.totalPoints || 0,
-      matchPoints: {},
-    };
-  });
+      totalPoints,
+      matchPoints: {}, // Not needed for general leaderboard
+    });
+  }
+
+  await batch.commit();
+
+  // Sort by totalPoints descending
+  rankings.sort((a, b) => b.totalPoints - a.totalPoints);
 
   await adminDb.doc("leaderboard/current").set({ rankings, updatedAt: new Date().toISOString() });
 }
